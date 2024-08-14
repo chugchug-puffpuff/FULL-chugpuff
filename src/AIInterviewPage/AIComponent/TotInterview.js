@@ -86,8 +86,6 @@ const TotInterview = ({ selectedType, selectedFeedback, userName }) => {
         const transcript = Array.from(event.results)
             .map(result => result[0].transcript)
             .join('');
-            .map(result => result[0].transcript)
-            .join('');
         setUserAnswer(transcript);
       };
 
@@ -190,31 +188,6 @@ const TotInterview = ({ selectedType, selectedFeedback, userName }) => {
     const seconds = String(now.getSeconds()).padStart(2, '0');
     return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`;
   };
-
-  // 인터뷰 종료 처리
-  const handleEndInterview = useCallback(async () => {
-    setIsInterviewEnded(true);
-
-    const interviewDetails = {
-      userName,
-      selectedType,
-      selectedFeedback,
-      interviewHistory,
-      endTime: getCurrentFormattedTime(),
-      currentQuestionIndex,
-    };
-
-    try {
-      await axios.post('http://localhost:4000/api/interviews/save', interviewDetails, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log('Mock interview details sent successfully');
-    } catch (error) {
-      console.error('Failed to send mock interview details', error);
-    }
-  }, [userName, selectedType, selectedFeedback, interviewHistory, currentQuestionIndex]);
 
   // 인터뷰 히스토리 아이템 렌더링 함수
   const renderHistoryItem = useCallback((item, index) => (
