@@ -356,7 +356,7 @@ app.get('/api/selfIntroduction/feedback', (req, res) => {
 });
 
 // 자기소개서 저장 엔드포인트 설정
-app.post('/api/self-introduction/save', (req, res) => {
+app.post('/api/selfIntroduction/save', (req, res) => {
   const { details } = req.body;
 
   // 수신된 데이터를 콘솔에 출력하여 확인
@@ -383,6 +383,20 @@ app.get('/api/selfIntroduction/:es_no', (req, res) => {
 
   if (selfIntroduction) {
     res.json(selfIntroduction);
+  } else {
+    res.status(404).json({ message: 'selfIntroduction not found' });
+  }
+});
+
+// 자기소개서 저장 상태 변경 엔드포인트
+app.post('/api/selfIntroduction/save/:es_no', (req, res) => {
+  const { es_no } = req.params;
+  const { save } = req.body;
+  const selfIntroduction = allSelfIntroductionHistory.find(i => i.es_no === parseInt(es_no, 10));
+
+  if (selfIntroduction) {
+    selfIntroduction.save = save;
+    res.status(200).send('Save status updated successfully');
   } else {
     res.status(404).json({ message: 'selfIntroduction not found' });
   }

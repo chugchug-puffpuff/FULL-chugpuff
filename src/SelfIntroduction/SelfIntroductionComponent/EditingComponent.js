@@ -47,7 +47,9 @@ const EditingComponent = ({ details }) => {
 
   const formattedText = feedback
     .replace(/\n\n/g, '\n\n&nbsp;\n\n')
-    .replace(/(\n#? )(.+?:)/g, '$1<span class="bold">$2</span>'); 
+    .replace(/(\n#? )(.+?:)/g, '$1<span class="bold">$2</span>')
+    .replace(/피드백:/g, '피드백')
+    .replace(/자기소개서:/g, '자기소개서');
 
   return (
     <div className="EditingComponent-frame-12">

@@ -61,7 +61,7 @@ const EnterSelfIntroduction = () => {
     };
   
     try {
-      const response = await axios.post('http://localhost:8080/api/self-introduction/save', data);
+      const response = await axios.post('http://localhost:8080/api/selfIntroduction/save', data);
       console.log('Response:', response.data);
       navigate('/editing-page', { state: { details: data.details } });
     } catch (error) {
