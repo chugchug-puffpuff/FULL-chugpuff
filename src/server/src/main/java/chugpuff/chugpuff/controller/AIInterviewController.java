@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -67,7 +68,7 @@ public class AIInterviewController {
         System.out.println("Logged in user: " + userDetails.getUsername());
         System.out.println("Interview owner user_id: " + aiInterview.getMember().getUser_id());
 
-        aiInterviewService.startInterview(AIInterviewNo);
+        aiInterviewService.startInterview(AIInterviewNo, userDetails);
     }
 
     // AI 모의면접 중지
@@ -93,7 +94,7 @@ public class AIInterviewController {
         System.out.println("Logged in user: " + userDetails.getUsername());
         AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
         if (aiInterview != null) {
-            aiInterviewService.saveFullFeedback(aiInterview, feedbackRequest.getQuestion(), feedbackRequest.getAnswer(), feedbackRequest.getFeedback());
+            aiInterviewService.saveFullFeedback(aiInterview, feedbackRequest.getQuestion(), feedbackRequest.getAnswer());
         }
     }
 
@@ -133,7 +134,7 @@ public class AIInterviewController {
 
     // 녹음된 파일을 STT로 변환하여 텍스트로 반환하고 ChatGPT로 보내기
     @PostMapping("/{AIInterviewNo}/process-audio-response")
-    public ResponseEntity<String> processAudioResponse(@PathVariable Long AIInterviewNo, @RequestParam("audioFile") MultipartFile audioFile) {
+    public ResponseEntity<String> processAudioResponse(@PathVariable Long AIInterviewNo, @RequestParam("audioFile") MultipartFile audioFile, @AuthenticationPrincipal UserDetails userDetails) {
         AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
         if (aiInterview == null) {
             return ResponseEntity.badRequest().body("Interview not found");
@@ -149,16 +150,56 @@ public class AIInterviewController {
 
         String sttText = externalAPIService.callSTT(audioFilePath);
 
-        String feedback = aiInterviewService.getChatGPTFeedback(sttText, aiInterview);
+        // 서비스 계층에서 자기소개서 내용을 가져옴
+        String selfIntroductionContent = aiInterviewService.getSelfIntroductionContentForInterview(userDetails);
+
+        String nextQuestion = aiInterviewService.getChatGPTQuestion(aiInterview, aiInterviewService.getCurrentQuestion(), sttText, selfIntroductionContent);
 
         if ("즉시 피드백".equals(aiInterview.getFeedbackType())) {
+            String feedback = aiInterviewService.getChatGPTFeedback(sttText, aiInterview);
             aiInterviewService.saveImmediateFeedback(aiInterview, aiInterviewService.getCurrentQuestion(), sttText, feedback);
+            aiInterviewService.handleInterviewProcess(aiInterview, nextQuestion);
+            return ResponseEntity.ok(feedback);
+        } else {
+            aiInterviewService.saveUserResponse(aiInterview, aiInterviewService.getCurrentQuestion(), sttText);
+            aiInterviewService.handleInterviewProcess(aiInterview, nextQuestion);
+            return ResponseEntity.ok(nextQuestion);
+        }
+    }
+
+    // AI 모의면접 종료
+    @PostMapping("/{AIInterviewNo}/end")
+    public void endInterview(@PathVariable Long AIInterviewNo) {
+        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
+        if (aiInterview == null) {
+            throw new RuntimeException("Interview not found");
         }
 
-        String nextQuestion = aiInterviewService.getChatGPTQuestion(aiInterview, aiInterviewService.getCurrentQuestion(), sttText);
-        aiInterviewService.handleInterviewProcess(aiInterview, nextQuestion);
+        aiInterviewService.endInterview(aiInterview);
+    }
 
-        return ResponseEntity.ok(feedback);
+    // AIInterviewNo로 면접 조회
+    @GetMapping("/{AIInterviewNo}")
+    public ResponseEntity<AIInterviewDTO> getInterviewById(@PathVariable Long AIInterviewNo) {
+        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
+        if (aiInterview == null) {
+            return ResponseEntity.status(404).body(null);
+        }
+        AIInterviewDTO aiInterviewDTO = aiInterviewService.convertToDTO(aiInterview);
+        return ResponseEntity.ok(aiInterviewDTO);
+    }
+
+    // id로 면접 조회
+    @GetMapping("/id/{id}")
+    public List<AIInterview> getInterviewsByMember(@PathVariable String id) {
+        return aiInterviewService.findByMemberId(id);
+    }
+
+    // AIInterviewNo로 면접 삭제
+    @DeleteMapping("/{AIInterviewNo}")
+    public ResponseEntity<Void> deleteInterview(@PathVariable Long AIInterviewNo) {
+        aiInterviewService.deleteInterviewById(AIInterviewNo);
+        return ResponseEntity.noContent().build();
     }
 }
 
