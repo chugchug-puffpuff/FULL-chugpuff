@@ -60,24 +60,20 @@ public class AIInterviewService {
 
     // AI 면접 생성 메서드
     public AIInterview createInterview(AIInterview aiInterview) {
-        // JWT 토큰에서 사용자 정보 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // 사용자 정보 확인
         Member member = memberService.getMemberByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        // 면접에 사용자 정보 저장
         aiInterview.setMember(member);
 
-        // AI 면접 생성
         return aiInterviewRepository.save(aiInterview);
     }
 
     // 인터뷰 세션 초기화 및 첫 질문 생성 메서드
     public String startInterview(AIInterview aiInterview) {
-        Member member = aiInterview.getMember(); // 면접에 저장된 사용자 정보 사용
+        Member member = aiInterview.getMember();
 
         String chatPrompt = generateChatPrompt(aiInterview, member);
         String firstResponse = externalAPIService.callChatGPT(chatPrompt);
@@ -104,7 +100,7 @@ public class AIInterviewService {
         String lastQuestion = getCurrentQuestion();
         String lastResponse = getLastUserResponse(aiInterview);
 
-        Member member = aiInterview.getMember(); // 면접에 저장된 사용자 정보 사용
+        Member member = aiInterview.getMember();
         String selfIntroduction = "";
 
         if ("자기소개서 면접".equals(aiInterview.getInterviewType())) {
@@ -112,8 +108,8 @@ public class AIInterviewService {
         }
 
         String nextQuestionPrompt = createQuestionPrompt(aiInterview, lastQuestion, lastResponse, selfIntroduction);
-
         String nextQuestionResponse = externalAPIService.callChatGPT(nextQuestionPrompt);
+
         String nextQuestion = extractQuestionOrFeedbackFromResponse(nextQuestionResponse, false);
 
         String ttsAudioUrl = externalAPIService.callTTS(nextQuestion);
@@ -273,14 +269,38 @@ public class AIInterviewService {
         String chatPrompt;
 
         if ("인성 면접".equals(aiInterview.getInterviewType())) {
-            chatPrompt = "인성 면접을 시작합니다. 각 요구사항에 맞게 면접을 진행해주세요. 1. 질문을 하나씩 해주세요. 2. 면접의 주제는 '인성면접' 입니다. 3. 한글로 해주세요. 4. 존댓말로 해주세요.";
+            chatPrompt = "인성 면접을 시작합니다. 아래 형식을 반드시 따르세요.\n"
+                    + "형식: 질문: [질문 내용]\n"
+                    + "반드시 질문은 '질문: '으로 시작해야 합니다. 이 형식을 따르지 않을 경우, 결과는 무효로 처리됩니다. 예시: '질문: 인성 면접에서 중요한 점은 무엇인가요?'\n"
+                    + "1. 질문은 반드시 '질문: '으로 시작해야 합니다.\n"
+                    + "2. 한 번에 하나의 질문만 해주세요.\n"
+                    + "3. 면접의 주제는 인성 면접입니다.\n"
+                    + "4. 한글로 작성해 주세요.\n"
+                    + "5. 반드시 '질문: '으로 시작하는 구조를 따르세요.\n"
+                    + "6. 질문은 반드시 존댓말로 작성해 주세요.\n";
         } else if ("직무 면접".equals(aiInterview.getInterviewType())) {
             String job = member.getJob();
             String jobKeyword = member.getJobKeyword();
-            chatPrompt = job + " 직무에 대한 면접을 " + jobKeyword + "에 중점을 두고 직무 면접을 시작합니다. 각 요구사항에 맞게 면접을 진행해주세요. 1. 질문을 하나씩 해주세요. 2. 면접의 주제는 " + job + " 직무의 " + jobKeyword + "입니다. 3. 한글로 해주세요. 4. 존댓말로 해주세요.";
+            chatPrompt = job + " 직무에 대한 면접을 " + jobKeyword + "에 중점을 두고 시작합니다. 반드시 아래 형식을 따르세요.\n"
+                    + "형식: 질문: [질문 내용]\n"
+                    + "반드시 질문은 '질문: '으로 시작해야 하며, 이 형식을 무조건 따르세요. 예시: '질문: 이 직무에서 중요한 기술은 무엇인가요?'\n"
+                    + "1. 질문은 반드시 '질문: '으로 시작해야 합니다.\n"
+                    + "2. 한 번에 하나의 질문만 해주세요.\n"
+                    + "3. 면접의 주제는 " + job + " 직무의 " + jobKeyword + "입니다.\n"
+                    + "4. 한글로 작성해 주세요.\n"
+                    + "5. 반드시 '질문: '으로 시작하는 구조를 따르세요.\n"
+                    + "6. 질문은 반드시 존댓말로 작성해 주세요.\n";
         } else if ("자기소개서 면접".equals(aiInterview.getInterviewType())) {
             String selfIntroductionContent = getSelfIntroductionContentForInterview(member);
-            chatPrompt = selfIntroductionContent + " 이 자기소개서를 기반으로 자기소개서 면접을 시작합니다. 각 요구사항에 맞게 면접을 진행해주세요. 1. 질문을 하나씩 해주세요. 2. 면접의 주제는 '자기소개서 면접' 입니다. 3. 한글로 해주세요. 4. 존댓말로 해주세요.";
+            chatPrompt = selfIntroductionContent + " 이 자기소개서를 기반으로 면접을 시작합니다. 반드시 아래 형식을 따르세요.\n"
+                    + "형식: 질문: [질문 내용]\n"
+                    + "반드시 질문은 '질문: '으로 시작해야 하며, 이 형식을 무조건 따르세요. 예시: '질문: 자기소개서를 작성하면서 중요하게 생각한 점은 무엇인가요?'\n"
+                    + "1. 질문은 반드시 '질문: '으로 시작해야 합니다.\n"
+                    + "2. 한 번에 하나의 질문만 해주세요.\n"
+                    + "3. 면접의 주제는 '자기소개서 면접'입니다.\n"
+                    + "4. 한글로 작성해 주세요.\n"
+                    + "5. 반드시 '질문: '으로 시작하는 구조를 따르세요.\n"
+                    + "6. 질문은 반드시 존댓말로 작성해 주세요.\n";
         } else {
             throw new RuntimeException("Invalid interview type");
         }
@@ -333,15 +353,17 @@ public class AIInterviewService {
 
     // 응답에서 질문 또는 피드백을 추출하는 메서드
     private String extractQuestionOrFeedbackFromResponse(String response, boolean isFeedback) {
-        if (response.startsWith("질문: ")) {
-            return response.substring("질문: ".length()).trim();
-        } else if (response.startsWith("피드백: ")) {
+        if (response.startsWith("피드백: ")) {
             if (isFeedback) {
                 return response.substring("피드백: ".length()).trim();
             } else {
                 throw new RuntimeException("Expected a question, but received feedback instead.");
             }
-        } else {
+        }
+        else {
+            if (!response.startsWith("질문: ")) {
+                return "질문: " + response.trim();
+            }
             return response.trim();
         }
     }
