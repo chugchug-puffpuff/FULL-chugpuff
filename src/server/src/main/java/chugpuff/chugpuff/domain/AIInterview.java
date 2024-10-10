@@ -1,9 +1,6 @@
 package chugpuff.chugpuff.domain;
 
-<<<<<<< HEAD
-=======
 import com.fasterxml.jackson.annotation.JsonManagedReference;
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,15 +24,6 @@ public class AIInterview {
     private String feedbackType;
 
     @OneToMany(mappedBy = "aiInterview", cascade = CascadeType.ALL)
-<<<<<<< HEAD
-    private List<AIInterviewIF> immediateFeedbacks;
-
-    @OneToOne(mappedBy = "aiInterview", cascade = CascadeType.ALL)
-    private AIInterviewFF overallFeedback;
-
-    private LocalDateTime aiInterviewDate;
-
-=======
     @JsonManagedReference
     private List<AIInterviewIF> immediateFeedbacks;
 
@@ -49,13 +37,9 @@ public class AIInterview {
     @JsonManagedReference
     private List<AIInterviewFFB> feedbacks;
 
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
     @PrePersist
     protected void onCreate() {
         this.aiInterviewDate = LocalDateTime.now();
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
+
