@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-import React, { useEffect, useState } from 'react'
-import './JobPostingList.css'
-import axios from 'axios';
-
-const JobPosting = ({ company, title, experience, education, location, employmentType, dateRange, url }) => (
-=======
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './JobPostingList.css';
@@ -12,25 +5,19 @@ import axios from 'axios';
 import Pagination from '../../Route/Pagination';
 
 const JobPosting = ({ jobId, company, title, experience, education, location, employmentType, dateRange, url, commentCount, scrapCount, scraped }) => (
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
-  <div className="JobPostingList-frame-23">
+ <div className="JobPostingList-frame-23">
     <div className="JobPostingList-frame-24">
       <div className="JobPostingList-text-wrapper-10">{company}</div>
     </div>
     <div className="JobPostingList-frame-25">
       <div className="JobPostingList-frame-26">
         <div className="JobPostingList-frame-27">
-<<<<<<< HEAD
-          <div className="JobPostingList-frame-28">
-            <p className="JobPostingList-text-wrapper-11">{title}</p>
-          </div>
-=======
+
           <Link to={`/recruitinfo/${jobId}`}>
             <div className="JobPostingList-frame-28">
               <p className="JobPostingList-text-wrapper-11">{title}</p>
             </div>
           </Link>
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           <div className="JobPostingList-frame-29">
             <div className="JobPostingList-text-wrapper-12">{experience}</div>
             <div className="JobPostingList-text-wrapper-12">{education}</div>
@@ -42,20 +29,11 @@ const JobPosting = ({ jobId, company, title, experience, education, location, em
         <div className="JobPostingList-scrapAndComment">
           <div className="JobPostingList-scrap-wrapper">
             <img
-<<<<<<< HEAD
-              className="JobPostingList-scrap"
-              alt="scrap"
-              src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66ba069ad632e20f0c1152a0/img/grade@2x.png"
-            />
-            {/* <div className="JobPostingList-scrapCounts">{scrapCounts}</div> */}
-            <div className="JobPostingList-scrapCounts">30</div>
-=======
               className={`JobPostingList-scrap ${scraped ? 'scraped' : ''}`}
               alt="scrap"
               src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66ba069ad632e20f0c1152a0/img/grade@2x.png"
             />
             <div className="JobPostingList-scrapCounts">{scrapCount}</div>
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           </div>
           <div className="JobPostingList-comment-wrapper">
             <img
@@ -63,12 +41,7 @@ const JobPosting = ({ jobId, company, title, experience, education, location, em
               alt="comment"
               src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66c2c247830accd7d866283e/img/sms@2x.png"
             />
-<<<<<<< HEAD
-            {/* <div className="JobPostingList-commentCounts">{commentCounts}</div> */}
-            <div className="JobPostingList-commentCounts">20</div>
-=======
             <div className="JobPostingList-commentCounts">{commentCount}</div>
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           </div>
         </div>
       </div>
@@ -79,21 +52,14 @@ const JobPosting = ({ jobId, company, title, experience, education, location, em
   </div>
 );
 
-<<<<<<< HEAD
-const JobPostingList = ({ detailRegion, jobKeyword }) => {
-=======
 const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   const [postings, setPostings] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 8;
   const [sortToggle, setSortToggle] = useState(false);
   const [sortType, setSortType] = useState('최신순');
-<<<<<<< HEAD
-=======
   const [searchKeyword, setSearchKeyword] = useState('');
   const [scrapedJobs, setScrapedJobs] = useState([]);
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 
   const sortToggleShow = () => {
     setSortToggle(!sortToggle);
@@ -104,17 +70,6 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
     setSortToggle(false);
   };
 
-<<<<<<< HEAD
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/job-postings?regionName=${detailRegion}&jobName=${jobKeyword}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        const jobs = response.data.jobs.job.map(job => ({
-=======
   const fetchCommentsCount = useCallback(async (jobId) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/job-postings/${jobId}/comments`, {
@@ -155,7 +110,6 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
         const scrapCount = await fetchScrapCount(job.id);
         return {
           jobId: job.id,
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           company: job.company.detail.name,
           title: job.position.title,
           experience: job.position['experience-level'].name,
@@ -163,19 +117,6 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
           location: job.position.location.name,
           employmentType: job.position['job-type'].name,
           dateRange: `등록 ${new Date(job['opening-timestamp'] * 1000).toLocaleDateString()} ~ 마감 ${new Date(job['expiration-timestamp'] * 1000).toLocaleDateString()}`,
-<<<<<<< HEAD
-          url: job.url
-        }));
-        setPostings(jobs);
-        setCurrentPage(1); // 파라미터가 변경되면 페이지 초기화
-      } catch (error) {
-        console.error('Error fetching job postings:', error);
-      }
-    };
-
-    fetchData();
-  }, [detailRegion, jobKeyword]);
-=======
           url: job.url,
           commentCount: commentCount,
           scrapCount: scrapCount
@@ -235,13 +176,6 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
 
   // 페이지네이션
   const totalPages = Math.ceil(postings.length / postsPerPage);
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
-
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = postings.slice(indexOfFirstPost, indexOfLastPost);
-
-<<<<<<< HEAD
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ // 페이지 이동 시 스크롤 중앙으로 이동
@@ -250,9 +184,7 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
     });
   };
 
-=======
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
-  return (
+ return (
     <div className="JobPostingList-frame-18">
       <div className="JobPostingList-div">
         <div className="JobPostingList-text-wrapper-8">전체 ({postings.length}건)</div>
@@ -272,23 +204,14 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
               type="text"
               className="JobPostingList-toggle-text-wrapper search-input"
               placeholder="기업명, 공고제목 등"
-<<<<<<< HEAD
-              // value={searchKeyword}
-              // onChange={(e) => setSearchKeyword(e.target.value)}
-=======
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
             />
             <img
               className="JobPostingList-search"
               alt="Search"
               src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66c2c0b3f3875b7815aadd85/img/search@2x.png"
-<<<<<<< HEAD
-              // onClick={handleSearch}
-=======
               onClick={handleSearch}
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
             />
           </div>
         </div>
@@ -299,20 +222,9 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
                 <div className="JobPostingList-toggle-text-wrapper">최신순</div>
               </div>
             )}
-<<<<<<< HEAD
-            {sortType !== '스크랩순' && (
-              <div className="JobPostingList-toggle-frame-2" onClick={() => sortPosts('스크랩순')}>
-                <div className="JobPostingList-toggle-text-wrapper">스크랩순</div>
-              </div>
-            )}
-            {sortType !== '댓글순' && (
-              <div className="JobPostingList-toggle-frame-2" onClick={() => sortPosts('댓글순')}>
-                <div className="JobPostingList-toggle-text-wrapper">댓글순</div>
-=======
             {sortType !== '조회순' && (
               <div className="JobPostingList-toggle-frame-2" onClick={() => sortPosts('조회순')}>
                 <div className="JobPostingList-toggle-text-wrapper">조회순</div>
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
               </div>
             )}
             {sortType !== '마감순' && (
@@ -326,11 +238,7 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
       <div className="JobPostingList-frame-22">
         {currentPosts.map((posting, index) => (
           <React.Fragment key={index}>
-<<<<<<< HEAD
-            <JobPosting {...posting} />
-=======
             <JobPosting {...posting} scraped={scrapedJobs.includes(posting.jobId)} />
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
             <img
               className="JobPostingList-line-2"
               alt="Line"
@@ -339,28 +247,9 @@ const JobPostingList = ({ detailRegion, jobMidname, jobKeyword }) => {
           </React.Fragment>
         ))}
       </div>
-<<<<<<< HEAD
-      <div className="JobPostingList-frame-32">
-        {[...Array(Math.ceil(postings.length / postsPerPage)).keys()].map(number => (
-          <div
-            key={number + 1}
-            className={`JobPostingList-frame-34 ${currentPage === number + 1 ? 'active' : ''}`}
-            onClick={() => paginate(number + 1)}
-          >
-            <div className="JobPostingList-text-wrapper-15">{number + 1}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-export default JobPostingList
-=======
       <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} scrollTop={550} />
     </div>
   );
 };
 
 export default JobPostingList;
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013

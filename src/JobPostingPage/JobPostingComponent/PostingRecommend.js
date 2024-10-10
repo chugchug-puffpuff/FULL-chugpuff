@@ -6,13 +6,9 @@ import axios from 'axios';
 const PostingRecommend = () => {
   const [showMore, setShowMore] = useState(false);
   const [postRecommend, setPostRecommend] = useState([]);
-<<<<<<< HEAD
-  const displayedRecommendations = showMore ? postRecommend.slice(0, 8) : postRecommend.slice(0, 4);
-=======
   const [scrapedJobs, setScrapedJobs] = useState([]);
   const displayedRecommendations = showMore ? postRecommend.slice(0, 12) : postRecommend.slice(0, 4);
   const imageCache = {};
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,18 +18,12 @@ const PostingRecommend = () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         });
-<<<<<<< HEAD
-        const jobRecommendations = response.data.jobs.job.map(job => {
-=======
         const jobRecommendations = await Promise.all(response.data.jobs.job.map(async job => {
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           const expirationTimestamp = job['expiration-timestamp'] * 1000;
           const currentTime = new Date().getTime();
           const timeDifference = expirationTimestamp - currentTime;
           const expirationDay = `D-${Math.ceil(timeDifference / (1000 * 60 * 60 * 24))}`;
 
-<<<<<<< HEAD
-=======
           // 스크랩 수 불러오기
           const scrapResponse = await axios.get(`http://localhost:8080/api/job-postings/${job.id}/scrap-count`, {
             headers: {
@@ -63,21 +53,16 @@ const PostingRecommend = () => {
 
           const imageUrl = await fetchImage(job.position.title);
 
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           return {
             jobId: job.id,
             company: job.company.detail.name,
             title: job.position.title,
             expirationDay: expirationDay,
-<<<<<<< HEAD
-          };
-        });
-=======
+
             scrapCount: scrapResponse.data || 0,
             imageUrl: imageUrl
           };
         }));
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
         setPostRecommend(jobRecommendations);
       } catch (error) {
         console.error('Error fetching job postings:', error);
@@ -87,8 +72,6 @@ const PostingRecommend = () => {
     fetchData();
   }, []);
 
-<<<<<<< HEAD
-=======
   // 스크랩한 공고 목록 가져온 다음 리스트에 스크랩한 공고 표시
   useEffect(() => {
     axios.get('http://localhost:8080/api/job-postings/scraps', {
@@ -108,7 +91,6 @@ const PostingRecommend = () => {
     });
   }, []);
 
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   return (
     <div>
       <div className="PostingRecommend-frame">
@@ -124,13 +106,8 @@ const PostingRecommend = () => {
               <div className="PostingRecommend-overlap-group">
                 <img
                   className="PostingRecommend-image"
-<<<<<<< HEAD
-                  alt="Image"
-                  src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66ba069ad632e20f0c1152a0/img/image-2-1@2x.png"
-=======
                   alt="기업 이미지 로고"
                   src={job.imageUrl}
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
                 />
                 <div className="PostingRecommend-frame-8">
                   <div className="PostingRecommend-text-wrapper-5">{job.company}</div>
@@ -142,15 +119,6 @@ const PostingRecommend = () => {
                       <div className="PostingRecommend-frame-12">
                         <div className="PostingRecommend-grade-wrapper">
                           <img
-<<<<<<< HEAD
-                            className="PostingRecommend-grade"
-                            alt="Grade"
-                            src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66ba069ad632e20f0c1152a0/img/grade-11@2x.png"
-                          />
-                        </div>
-                        <div className="PostingRecommend-frame-13">
-                          <div className="PostingRecommend-text-wrapper-7">30</div>
-=======
                             className={`PostingRecommend-grade ${scrapedJobs.includes(job.jobId) ? 'scraped' : ''}`}
                             alt="scrap"
                             src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66ba069ad632e20f0c1152a0/img/grade@2x.png"
@@ -158,7 +126,6 @@ const PostingRecommend = () => {
                         </div>
                         <div className="PostingRecommend-frame-13">
                           <div className="PostingRecommend-text-wrapper-7">{job.scrapCount}</div>
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
                         </div>
                       </div>
                       <div className="PostingRecommend-text-wrapper-8">{job.expirationDay}</div>

@@ -9,10 +9,7 @@ import RecruitInfoPage from "./RecruitInfoPage.js";
 
 const JobPostingMain = ({ authenticate, setAuthenticate, userName }) => {
   const [selectedDetailRegion, setSelectedDetailRegion] = useState(null);
-<<<<<<< HEAD
-=======
   const [selectedJobMidname, setSelectedJobMidname] = useState(null);
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   const [selectedJobKeyword, setSelectedJobKeyword] = useState(null);
 
   return (
@@ -29,11 +26,6 @@ const JobPostingMain = ({ authenticate, setAuthenticate, userName }) => {
             <div className="JobPostingMain-frame-wrapper">
               <JobPostingSelect 
                 setSelectedDetailRegion={setSelectedDetailRegion}
-<<<<<<< HEAD
-                setSelectedJobKeyword={setSelectedJobKeyword}
-              />
-              <JobPostingList detailRegion={selectedDetailRegion} jobKeyword={selectedJobKeyword} />
-=======
                 setSelectedJobMidname={setSelectedJobMidname}
                 setSelectedJobKeyword={setSelectedJobKeyword}
               />
@@ -42,20 +34,15 @@ const JobPostingMain = ({ authenticate, setAuthenticate, userName }) => {
                 jobMidname={selectedJobMidname}
                 jobKeyword={selectedJobKeyword} 
               />
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
             </div>
           </div>
         } />
         <Route path="/recruitinfo/:jobId" element={
-<<<<<<< HEAD
-          <RecruitInfoPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />
-=======
           <RecruitInfoPage 
             authenticate={authenticate} 
             setAuthenticate={setAuthenticate} 
             userName={userName}
           />
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
         } />
       </Routes>
       <NavBar authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />

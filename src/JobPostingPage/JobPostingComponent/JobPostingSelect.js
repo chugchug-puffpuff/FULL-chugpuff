@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import './JobPostingSelect.css';
-import axios from 'axios';
-
-const JobPostingSelect = ({ setSelectedDetailRegion, setSelectedJobKeyword }) => {
-=======
 import React, { useState, useEffect, useMemo } from 'react';
 import './JobPostingSelect.css';
 import axios from 'axios';
 
 const JobPostingSelect = ({ setSelectedDetailRegion, setSelectedJobMidname, setSelectedJobKeyword }) => {
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   const [regionToggle, setRegionToggle] = useState(false);
   const [jobToggle, setJobToggle] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState('');
@@ -20,11 +12,7 @@ const JobPostingSelect = ({ setSelectedDetailRegion, setSelectedJobMidname, setS
   const [detailRegions, setDetailRegions] = useState([]);
   const [jobKeywords, setJobKeywords] = useState([]);
 
-<<<<<<< HEAD
-  const regions = {
-=======
   const regions = useMemo (() => ({
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
     "전국": "전국",
     "서울": "서울전체",
     "경기": "경기전체",
@@ -43,11 +31,7 @@ const JobPostingSelect = ({ setSelectedDetailRegion, setSelectedJobMidname, setS
     "충남": "충남전체",
     "제주": "제주전체",
     "세종": "세종특별자치시"
-<<<<<<< HEAD
-  };
-=======
   }), []);
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 
   const jobs = ["기획·전략", "마케팅·홍보·조사", "회계·세무·재무", "인사·노무·HRD", "총무·법무·사무", "IT개발·데이터", "디자인", "영업·판매·무역", "고객상담·TM", "구매·자재·물류", "상품기획·MD", "운전·운송·배송", "서비스", "생산", "건설·건축", "의료", "연구·R&D", "교육", "미디어·문화·스포츠", "금융·보험", "공공·복지"];
 
@@ -67,11 +51,7 @@ const JobPostingSelect = ({ setSelectedDetailRegion, setSelectedJobMidname, setS
           console.error('Error fetching detail regions:', error);
         });
     }
-<<<<<<< HEAD
-  }, [selectedRegion]);
-=======
   }, [selectedRegion, regions]);
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 
   // 직무 목록을 반환하는 엔드포인트
   useEffect(() => {
@@ -100,10 +80,7 @@ const JobPostingSelect = ({ setSelectedDetailRegion, setSelectedJobMidname, setS
   const handleJobClick = (job) => {
     setSelectedJob(job);
     setSelectedJobKeywordState(null); // 직무를 다시 선택할 경우 직무키워드 초기화
-<<<<<<< HEAD
-=======
     setSelectedJobMidname(job) // 부모 컴포넌트에 전달
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   };
 
   const handlejobKeywordClick = (jobKeyword) => {

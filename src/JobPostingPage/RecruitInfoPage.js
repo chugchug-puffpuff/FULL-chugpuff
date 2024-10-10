@@ -12,10 +12,8 @@ const RecruitInfoPage = ({ authenticate, setAuthenticate }) => {
   const { jobId } = useParams();
   const [jobInfo, setJobInfo] = useState(null);
   const [userName, setUserName] = useState('');
-<<<<<<< HEAD
-=======
   const [commentCount, setCommentCount] = useState(0);
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
+
 
   useEffect(() => {
     const fetchJobInfo = async () => {
@@ -26,10 +24,8 @@ const RecruitInfoPage = ({ authenticate, setAuthenticate }) => {
           }
         });
         const jobInfoData = response.data.jobs.job.map(job => ({
-<<<<<<< HEAD
-=======
+
           jobId: job.id, // 공고 id
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           company: job.company.detail.name, // 기업명
           title: job.position.title, // 제목
           industry: job.position.industry.name, // 업종
@@ -74,38 +70,28 @@ const RecruitInfoPage = ({ authenticate, setAuthenticate }) => {
     fetchUserName();
   }, [jobId]);
 
-<<<<<<< HEAD
-=======
+
   const updateCommentCount = (newCount) => {
     setCommentCount(newCount);
   };
 
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   return (
     <div className="RecruitInfoPage">
       <div className="RecruitInfoPage-frame">
         <div className="RecruitInfoPage-div">
-<<<<<<< HEAD
-          <RecruitInfo jobInfo={jobInfo} />
-=======
           <RecruitInfo jobInfo={jobInfo} commentCount={commentCount} />
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           <InfoSquare jobInfo={jobInfo} />
           <img
             className="RecruitInfoPage-line-2"
             alt="Line"
             src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66c2d8cf4d8f7eb28bb7ce11/img/line-17.png"
           />
-<<<<<<< HEAD
-          <JobComment />
-=======
           <JobComment 
             storedUserName={userName} 
             company={jobInfo?.[0]?.company} 
             jobId={jobInfo?.[0]?.jobId} 
             updateCommentCount={updateCommentCount}
           />
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           <div className="CommunityPost-frame-19"onClick={() => navigate('/jobposting')}>
             <img
               className="CommunityPost-format-list-bulleted"

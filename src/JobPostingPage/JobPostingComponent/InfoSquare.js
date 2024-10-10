@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-import React from 'react'
-import './InfoSquare.css'
 
-const InfoSquare = ({ jobInfo }) => {
-=======
 import React, { useState, useEffect } from 'react'
 import './InfoSquare.css'
 import axios from 'axios';
@@ -31,7 +26,6 @@ const InfoSquare = ({ jobInfo }) => {
     }
   }, [jobInfo]);
 
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   if (!jobInfo || jobInfo.length === 0) {
     return <div>Loading...</div>;
   }
@@ -42,14 +36,9 @@ const InfoSquare = ({ jobInfo }) => {
     <div className="InfoSquare-frame-11" onClick={() => window.open(job.infoUrl, '_blank')}>
       <img
         className="InfoSquare-image"
-<<<<<<< HEAD
-        alt="Image"
-        src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66c2d8cf4d8f7eb28bb7ce11/img/image-2.png"
-=======
         alt="기업 이미지 로고"
         src={imageUrl}
->>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
-      />
+     />
       <div className="InfoSquare-frame-5">
         <div className="InfoSquare-text-wrapper-6">기업정보</div>
         <div className="InfoSquare-frame-12">
