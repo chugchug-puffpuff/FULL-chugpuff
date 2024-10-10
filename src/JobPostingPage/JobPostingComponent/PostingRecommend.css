@@ -57,6 +57,10 @@
   position: absolute;
   top: 0;
   width: 300px;
+<<<<<<< HEAD
+=======
+  border-radius: 8px;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }
 
 .PostingRecommend-frame-8 {
@@ -67,7 +71,11 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+<<<<<<< HEAD
   gap: 16px;
+=======
+  gap: 6px;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   height: 194px;
   left: 0;
   overflow: hidden;
@@ -127,7 +135,11 @@
   justify-content: space-between;
   position: absolute;
   width: 231px;
+<<<<<<< HEAD
   top: 85px;
+=======
+  top: 92px;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }
 
 .PostingRecommend-frame-12 {
@@ -145,11 +157,23 @@
 }
 
 .PostingRecommend-grade {
+<<<<<<< HEAD
   height: 40px;
   left: -8px;
   position: absolute;
   top: -8px;
   width: 40px;
+=======
+  height: 32px;
+  left: -6px;
+  position: absolute;
+  top: -10px;
+  width: 32px;
+}
+
+.scraped {
+  filter: sepia(90%) saturate(250%) hue-rotate(30deg) brightness(140%) contrast(90%);
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }
 
 .PostingRecommend-frame-13 {
@@ -158,6 +182,10 @@
   flex: 0 0 auto;
   flex-direction: column;
   gap: 10px;
+<<<<<<< HEAD
+=======
+  margin-left: 2px;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   position: relative;
 }
 

@@ -3,6 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './AllPost.css';
+<<<<<<< HEAD
+=======
+import Pagination from '../../Route/Pagination.js';
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 
 // 날짜 형식을 0000-00-00 00:00:00으로 변환
 const formatDate = (dateString) => {
@@ -14,7 +18,11 @@ const formatDate = (dateString) => {
 };
 
 // 개별 게시물
+<<<<<<< HEAD
 const PostList = ({ boardNo, boardTitle, category, boardDate, commentCount, likes}) => (
+=======
+const PostList = ({ boardNo, boardTitle, category, boardDate, commentCount, likes, liked}) => (
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   <div>
     <div className="AllPost-view-2">
       <div className="AllPost-frame-24">
@@ -38,7 +46,11 @@ const PostList = ({ boardNo, boardTitle, category, boardDate, commentCount, like
             </div>
             <div className="AllPost-frame-10">
               <img
+<<<<<<< HEAD
                 className="AllPost-like"
+=======
+                className={`AllPost-like ${liked ? 'liked' : ''}`}
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
                 alt="Favorite"
                 src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/6688fccfcda281749136af44/img/favorite@2x.png"
               />
@@ -67,6 +79,10 @@ const AllPost = () => {
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [noResults, setNoResults] = useState(false);
+<<<<<<< HEAD
+=======
+  const [likedPosts, setLikedPosts] = useState([]);
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   const postsPerPage = 8;
   const navigate = useNavigate();
 
@@ -96,7 +112,25 @@ const AllPost = () => {
       }
     };
 
+<<<<<<< HEAD
     fetchPosts();
+=======
+    const fetchLikedPosts = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/board/liked', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setLikedPosts(response.data.map(post => post.boardNo));
+      } catch (error) {
+        console.error('Error fetching liked posts:', error);
+      }
+    };
+
+    fetchPosts();
+    fetchLikedPosts();
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   }, []);
 
   // 검색 기능 엔드포인트
@@ -125,10 +159,15 @@ const AllPost = () => {
     }
   };
 
+<<<<<<< HEAD
+=======
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
+<<<<<<< HEAD
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ // 페이지 이동시 중앙으로 스크롤 이동
@@ -137,6 +176,8 @@ const AllPost = () => {
     });
   };
 
+=======
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   // 정렬 토글
   const sortToggleShow = () => {
     setSortToggle(!sortToggle);
@@ -267,6 +308,7 @@ const AllPost = () => {
                 <div className="AllPost-no-results">검색결과가 없습니다.</div>
               ) : (
                 currentPosts.map((post, index) => (
+<<<<<<< HEAD
                   <PostList key={index} {...post} />
                 ))
               )}
@@ -282,6 +324,13 @@ const AllPost = () => {
                   </div>
                 ))}
               </div>
+=======
+                  <PostList key={index} {...post} liked={likedPosts.includes(post.boardNo)}/>
+                ))
+              )}
+              </div>
+              <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} scrollTop={730} />
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
             </div>
           </div>
         </div>

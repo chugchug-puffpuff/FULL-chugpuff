@@ -273,6 +273,13 @@
   width: 32px;
 }
 
+<<<<<<< HEAD
+=======
+.scraped {
+  filter: sepia(90%) saturate(250%) hue-rotate(30deg) brightness(140%) contrast(90%);
+}
+
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 .JobPostingList-scrapCounts {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -448,4 +455,22 @@
   padding: 4px 12px;
   position: relative;
   width: 33px;
+<<<<<<< HEAD
+=======
+}
+
+.JobPostingList-text-wrapper-16 {
+  cursor: pointer;
+  color: var(--variable-collection-main-black);
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+  line-height: normal;
+  margin-top: -1px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }

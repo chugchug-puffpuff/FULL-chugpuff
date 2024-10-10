@@ -62,7 +62,11 @@
   padding: 12px 28px;
   position: relative;
   width: 634px;
+<<<<<<< HEAD
   z-index: 100;
+=======
+  z-index: 1;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }
 
 .JobPostingSelect-close {

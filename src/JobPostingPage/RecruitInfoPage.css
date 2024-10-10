@@ -24,7 +24,11 @@
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
+<<<<<<< HEAD
   gap: 60px;
+=======
+  gap: 30px;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   padding: 48px 60px 40px;
   position: relative;
   width: 1300px;
@@ -36,4 +40,8 @@
   object-fit: cover;
   position: relative;
   width: 100%;
+<<<<<<< HEAD
+=======
+  
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }

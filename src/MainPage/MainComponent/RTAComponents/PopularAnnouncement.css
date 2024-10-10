@@ -74,8 +74,14 @@
   display: flex;
   flex: 0 0 auto;
   justify-content: space-between;
+<<<<<<< HEAD
   position: relative;
   width: 231px;
+=======
+  position: absolute;
+  width: 231px;
+  top: 92px;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }
 
 .PopularAnnouncement-frame-5 {
@@ -93,11 +99,23 @@
 }
 
 .PopularAnnouncement-grade {
+<<<<<<< HEAD
   height: 40px;
   left: -8px;
   position: absolute;
   top: -8px;
   width: 40px;
+=======
+  height: 32px;
+  left: -6px;
+  position: absolute;
+  top: -10px;
+  width: 32px;
+}
+
+.scraped {
+  filter: sepia(90%) saturate(250%) hue-rotate(30deg) brightness(140%) contrast(90%);
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }
 
 .PopularAnnouncement-frame-6 {
@@ -106,6 +124,10 @@
   flex: 0 0 auto;
   flex-direction: column;
   gap: 10px;
+<<<<<<< HEAD
+=======
+  margin-left: 2px;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   position: relative;
 }
 

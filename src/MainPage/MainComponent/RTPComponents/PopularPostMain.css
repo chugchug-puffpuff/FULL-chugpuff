@@ -108,6 +108,10 @@
 }
 
 .PopularPostMain-text-wrapper-4 {
+<<<<<<< HEAD
+=======
+  cursor: pointer;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   align-self: stretch;
@@ -121,4 +125,11 @@
   overflow: hidden;
   position: relative;
   text-overflow: ellipsis;
+<<<<<<< HEAD
+=======
+}
+
+.PopularPostMain-img.liked {
+  filter: invert(29%) sepia(96%) saturate(7481%) hue-rotate(357deg) brightness(102%) contrast(107%);
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }

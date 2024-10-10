@@ -244,4 +244,11 @@
   justify-content: center;
   padding: 4px 8px;
   position: relative;
+<<<<<<< HEAD
+=======
+}
+
+.PopularPost-img-2.liked {
+  filter: invert(29%) sepia(96%) saturate(7481%) hue-rotate(357deg) brightness(102%) contrast(107%);
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }

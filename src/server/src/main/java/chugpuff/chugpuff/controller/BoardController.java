@@ -156,3 +156,4 @@ public class BoardController {
         return boardService.findBoardsByUser(authentication);
     }
 }
+

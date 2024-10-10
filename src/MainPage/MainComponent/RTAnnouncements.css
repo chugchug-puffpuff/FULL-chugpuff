@@ -21,6 +21,10 @@
 }
 
 .RTAnnouncements-text-wrapper-2 {
+<<<<<<< HEAD
+=======
+  cursor: pointer;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   color: var(--variable-collection-gray-2);
   font-family: "Pretendard Variable-Medium", Helvetica;
   font-size: 20px;
@@ -43,24 +47,40 @@
 }
 
 .RTAnnouncements-overlap-1 {
+<<<<<<< HEAD
+=======
+  cursor: pointer;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   position: absolute;
   top: 933px;
   left: 995px;
 }
 
 .RTAnnouncements-overlap-2 {
+<<<<<<< HEAD
+=======
+  cursor: pointer;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   position: absolute;
   top: 933px;
   left: 1310px;
 }
 
 .RTAnnouncements-overlap-3 {
+<<<<<<< HEAD
+=======
+  cursor: pointer;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   position: absolute;
   top: 1314px;
   left: 995px;
 }
 
 .RTAnnouncements-overlap-4 {
+<<<<<<< HEAD
+=======
+  cursor: pointer;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   position: absolute;
   top: 1314px;
   left: 1310px;

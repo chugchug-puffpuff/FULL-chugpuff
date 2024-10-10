@@ -37,6 +37,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+<<<<<<< HEAD
+=======
+import static org.mockito.ArgumentMatchers.eq;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -135,7 +139,11 @@ public class JobPostingServiceTest {
                 .thenReturn(new ResponseEntity<>(mockedResponse, HttpStatus.OK));
 
         // 테스트 실행
+<<<<<<< HEAD
         String result = jobPostingService.getJobPostingsByKeywords("마케팅", "posting-date");
+=======
+        String result = jobPostingService.getJobPostingsByKeywords("마케팅", "posting-date", "additionalParam1", "additionalParam2");
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 
         // JSON 비교
         JsonNode expectedJson = objectMapper.readTree(mockedResponse);
@@ -362,5 +370,9 @@ public class JobPostingServiceTest {
         verify(jobPostingCommentRepository, times(1)).delete(existingComment);
     }
 
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013

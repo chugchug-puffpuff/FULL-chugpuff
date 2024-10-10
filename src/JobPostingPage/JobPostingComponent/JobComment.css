@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .element {
   background-color: var(--variable-collection-gray4);
   height: 3622px;
@@ -366,6 +367,9 @@
 }
 
 .element .frame-17 {
+=======
+.JobComment-frame-17 {
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   align-items: center;
   display: flex;
   flex: 0 0 auto;
@@ -375,7 +379,11 @@
   width: 1176px;
 }
 
+<<<<<<< HEAD
 .element .div-2 {
+=======
+.JobComment-div-2 {
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   align-self: stretch;
   color: var(--variable-collection-gray-1);
   font-family: "Pretendard Variable-Bold", Helvetica;
@@ -383,6 +391,7 @@
   font-weight: 400;
   letter-spacing: -0.6px;
   line-height: 30px;
+<<<<<<< HEAD
   margin-top: -1px;
   position: relative;
 }
@@ -588,3 +597,19 @@
   position: relative;
   width: 145px;
 }
+=======
+  margin-top: -10px;
+  margin-bottom: -20px;
+  position: relative;
+}
+
+.JobComment-span {
+  font-weight: 600;
+  letter-spacing: -0.12px;
+}
+
+.JobComment-text-wrapper-12 {
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  letter-spacing: -0.12px;
+}
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013

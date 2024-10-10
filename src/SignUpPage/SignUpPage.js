@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
+=======
+import React, { useState } from 'react';
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 import './SignUpPage.css';
 import NavBar from '../MainPage/MainComponent/NavBar';
 import { useNavigate } from 'react-router-dom';
@@ -388,8 +392,13 @@ const SignUpPage = ({ authenticate, setAuthenticate }) => {
                     환영합니다^^
                   </p>
                   <div className="SignUpPage-frame-11">
+<<<<<<< HEAD
                     <div className="SignUpPage-frame-12" onClick={() => setShowConfirmation(false)}>
                       <div className="SignUpPage-text-wrapper-9" onClick={goToLogin}>로그인 이동</div>
+=======
+                    <div className="SignUpPage-frame-12" onClick={() => { setShowConfirmation(false); goToLogin();}}>
+                      <div className="SignUpPage-text-wrapper-9">로그인 이동</div>
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
                     </div>
                   </div>
                 </div>

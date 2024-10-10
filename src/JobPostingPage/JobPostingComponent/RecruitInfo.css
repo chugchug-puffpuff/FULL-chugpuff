@@ -232,9 +232,19 @@
 
 .RecruitInfo-scrap {
   cursor: pointer;
+<<<<<<< HEAD
   height: 32px;
   position: relative;
   width: 32px;
+=======
+  height: 33px;
+  position: relative;
+  width: 33px;
+}
+
+.scraped {
+  filter: sepia(90%) saturate(250%) hue-rotate(30deg) brightness(140%) contrast(90%);
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }
 
 .RecruitInfo-scrapCounts {
@@ -286,5 +296,9 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   width: fit-content;
+<<<<<<< HEAD
   top: 2px;
+=======
+  top: 3px;
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 }

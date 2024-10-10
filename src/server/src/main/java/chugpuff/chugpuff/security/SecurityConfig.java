@@ -33,7 +33,11 @@ public class SecurityConfig {
         http
                 .cors(withDefaults()) // CORS 설정
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+<<<<<<< HEAD
                         .requestMatchers("/api/login", "/api/members", "/api/members/checkUserId", "/api/members/request-email-verification", "/api/members/verify-email-code", "/api/job-postings/job-names").permitAll()
+=======
+                        .requestMatchers("/api/login", "/api/members", "/api/members/checkUserId", "/api/members/request-email-verification", "/api/members/verify-email-code", "/api/job-postings/job-names", "/api/board/likes", "/api/job-postings", "/api/job-postings/{jobId}/scrap-count").permitAll()
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화

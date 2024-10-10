@@ -1,4 +1,5 @@
 import React from "react";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 import "./MyPage.css";
 import NavBar from "../MainPage/MainComponent/NavBar";
@@ -166,6 +167,30 @@ export const MyPage = ({ authenticate, setAuthenticate, userName }) => {
           <div className="text-wrapper-13">로그아웃</div>
         </div>
       </div>
+=======
+import { useParams } from "react-router-dom";
+import "./MyPage.css";
+import NavBar from "../MainPage/MainComponent/NavBar";
+import MyInfoBar from "./MyPageComponent/MyInfoBar";
+import EditInformation from "./MyPageComponent/EditInformation";
+import MyScrap from "./MyPageComponent/MyScrap";
+import MyBoard from "./MyPageComponent/MyBoard";
+import MyComment from "./MyPageComponent/MyComment";
+import MyLiked from "./MyPageComponent/MyLiked";
+
+export const MyPage = ({ authenticate, setAuthenticate, userName }) => {
+  const { component } = useParams();
+  const activeComponent = component;
+
+  return (
+    <div className="MyPage">
+      <MyInfoBar setAuthenticate={setAuthenticate} userName={userName} />
+      {activeComponent === 'editInformation' && <EditInformation setAuthenticate={setAuthenticate}/>}
+      {activeComponent === 'myScrap' && <MyScrap />}
+      {activeComponent === 'myBoard' && <MyBoard />}
+      {activeComponent === 'myComment' && <MyComment />}
+      {activeComponent === 'myLiked' && <MyLiked />}
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
       <NavBar authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />
     </div>
   );

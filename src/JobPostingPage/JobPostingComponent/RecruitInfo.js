@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import React from 'react'
 import './RecruitInfo.css'
+=======
+import React, { useState, useEffect } from 'react'
+import './RecruitInfo.css'
+import axios from 'axios';
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 
 // 게시일 포맷팅
 const formatPostingDate = (timestamp) => {
@@ -21,13 +27,89 @@ const formatTimeStampWithDay = (timestamp) => {
   return `${formattedDate.replace(',', '')}`;
 }
 
+<<<<<<< HEAD
 const RecruitInfo = ({ jobInfo }) => {
+=======
+const RecruitInfo = ({ jobInfo, commentCount }) => {
+  const [scrapCount, setScrapCount] = useState(0);
+  const [isScraped, setIsScraped] = useState(false);
+  const [imageUrl, setImageUrl] = useState('https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66c2d8cf4d8f7eb28bb7ce11/img/image-2.png');
+
+  useEffect(() => {
+    if (jobInfo && jobInfo.length > 0) {
+      const fetchScrapCount = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/api/job-postings/${jobInfo[0].jobId}/scrap-count`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          setScrapCount(response.data);
+        } catch (error) {
+          console.error('Error fetching scrap count:', error);
+        }
+      };
+      fetchScrapCount();
+
+      const savedIsScraped = JSON.parse(localStorage.getItem(`isScraped_${jobInfo[0].jobId}`));
+      if (savedIsScraped !== null) {
+        setIsScraped(savedIsScraped);
+      }
+    }
+  }, [jobInfo]);
+
+  useEffect(() => {
+    if (jobInfo && jobInfo.length > 0) {
+      const job = jobInfo[0];
+      const fetchImage = async () => {
+        try {
+          const response = await axios.get(`https://api.bing.microsoft.com/v7.0/images/search?q=${job.title} 로고`, {
+            headers: { 'Ocp-Apim-Subscription-Key': '1e1ba0956772408883e8692f800bb01e' }
+          });
+          if (response.data.value && response.data.value.length > 0) {
+            setImageUrl(response.data.value[0].contentUrl);
+          }
+        } catch (error) {
+          console.error('Error fetching image from Bing API', error);
+        }
+      };
+
+      fetchImage();
+    }
+  }, [jobInfo]);
+
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   if (!jobInfo || jobInfo.length === 0) {
     return <div>Loading...</div>;
   }
 
   const job = jobInfo[0];
 
+<<<<<<< HEAD
+=======
+  // 스크랩 클릭 엔드포인트
+  const handleScrapClick = async () => {
+    try {
+      await axios.post(`http://localhost:8080/api/job-postings/${jobInfo[0].jobId}/scrap`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const response = await axios.get(`http://localhost:8080/api/job-postings/${jobInfo[0].jobId}/scrap-count`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setScrapCount(response.data);
+      const newIsScraped = !isScraped;
+      setIsScraped(newIsScraped);
+      localStorage.setItem(`isScraped_${jobInfo[0].jobId}`, JSON.stringify(newIsScraped));
+    } catch (error) {
+      console.error('Error posting scrap:', error);
+    }
+  };
+
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
   return (
     <div className="RecruitInfo-frame-2">
       <div className="RecruitInfo-text-wrapper">채용 공고</div>
@@ -51,11 +133,20 @@ const RecruitInfo = ({ jobInfo }) => {
             <div className="RecruitInfo-scrapAndComment">
               <div className="RecruitInfo-scrap-wrapper">
                 <img
+<<<<<<< HEAD
                   className="RecruitInfo-scrap"
                   alt="scrap"
                   src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66ba069ad632e20f0c1152a0/img/grade@2x.png"
                 />
                 <div className="RecruitInfo-scrapCounts">스크랩 30</div>
+=======
+                  className={`RecruitInfo-scrap ${isScraped ? 'scraped' : ''}`}
+                  alt="scrap"
+                  src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66ba069ad632e20f0c1152a0/img/grade@2x.png"
+                  onClick={handleScrapClick}
+                />
+                <div className="RecruitInfo-scrapCounts">스크랩 {scrapCount}</div>
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
               </div>
               <div className="RecruitInfo-comment-wrapper">
                 <img
@@ -63,7 +154,11 @@ const RecruitInfo = ({ jobInfo }) => {
                   alt="comment"
                   src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66c2c247830accd7d866283e/img/sms@2x.png"
                 />
+<<<<<<< HEAD
                 <div className="RecruitInfo-commentCounts">댓글 20</div>
+=======
+                <div className="RecruitInfo-commentCounts">댓글 {commentCount}</div>
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
               </div>
             </div>
           </div>
@@ -74,8 +169,13 @@ const RecruitInfo = ({ jobInfo }) => {
           />
           <img
             className="RecruitInfo-image"
+<<<<<<< HEAD
             alt="Image"
             src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66c2d8cf4d8f7eb28bb7ce11/img/image-2.png"
+=======
+            alt="기업 이미지 로고"
+            src={imageUrl}
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
           />
           <div className="RecruitInfo-frame-8">
             <div className="RecruitInfo-frame-9">

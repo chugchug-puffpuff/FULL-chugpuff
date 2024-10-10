@@ -3,7 +3,11 @@ import { AtomsDeyNumber } from "../../components/AtomsDeyNumber";
 import { AtomsMouth } from "../../components/AtomsMouth";
 import { AtomsWeekDey } from "../../components/AtomsWeekDey";
 import "./style.css";
+<<<<<<< HEAD
 
+=======
+//
+>>>>>>> ca63ab59f84b3bee18722590476cbe8f39143013
 export const Element = () => {
   return (
     <div className="element">
