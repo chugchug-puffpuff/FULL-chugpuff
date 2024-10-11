@@ -2,12 +2,39 @@ import React, { useState, useEffect, useRef } from 'react';
 import './EnterSelfIntroduction.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import ScrollToTop from '../../Route/ScrollToTop.js';
+
+const TypingText = () => {
+  const text = "잠시만 기다려 주세요...";
+  const [displayedText, setDisplayedText] = useState('');
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setDisplayedText((prev) => prev + text[index]);
+      setIndex((prevIndex) => {
+        const newIndex = prevIndex + 1;
+        if (newIndex === text.length) {
+          // 인덱스가 문자열 끝에 도달하면 다시 처음으로
+          setDisplayedText(''); // 빈 문자열로 초기화하지 않고 새로 시작
+          return 0;
+        }
+        return newIndex;
+      });
+    }, 250);
+
+    return () => clearInterval(intervalId);
+  }, [index, text]);
+
+  return <div className='EnterSelfIntroduction-TypingText'>{displayedText}</div>;
+};
 
 const EnterSelfIntroduction = () => {
   const [questionValue, setQuestionValue] = useState('');
   const [answerValue, setAnswerValue] = useState('');
   const [charCount, setCharCount] = useState(0);
   const [isButtonActive, setIsButtonActive] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const questionRef = useRef(null);
   const answerRef = useRef(null);
   const [items, setItems] = useState([]);
@@ -15,7 +42,7 @@ const EnterSelfIntroduction = () => {
 
   const handleAddItem = () => {
     const newItem = {
-      eS_qestion: '',
+      eS_question: '',
       eS_answer: '',
       questionRef: React.createRef(),
       answerRef: React.createRef(),
@@ -31,10 +58,13 @@ const EnterSelfIntroduction = () => {
   };
 
   const handleAnswerChange = (e) => {
-    setAnswerValue(e.target.value);
-    adjustTextareaHeight(answerRef.current);
-    setCharCount(e.target.value.length);
-    checkButtonActive(questionValue, e.target.value);
+    const value = e.target.value;
+    if (value.length <= 1000) {
+      setAnswerValue(value);
+      setCharCount(value.length);
+      adjustTextareaHeight(answerRef.current);
+      checkButtonActive(questionValue, value);
+    }
   };
 
   const adjustTextareaHeight = (textarea) => {
@@ -44,28 +74,33 @@ const EnterSelfIntroduction = () => {
     }
   };
 
-  const checkButtonActive = (eS_qestion, eS_answer) => {
-    const allQuestionsAnswered = eS_qestion.trim() !== '' && eS_answer.trim() !== '' && items.every(item => item.eS_qestion.trim() !== '' && item.eS_answer.trim() !== '');
+  const checkButtonActive = (eS_question, eS_answer) => {
+    const allQuestionsAnswered = eS_question.trim() !== '' && eS_answer.trim() !== '' && items.every(item => item.eS_question.trim() !== '' && item.eS_answer.trim() !== '');
     setIsButtonActive(allQuestionsAnswered);
   };
 
   const handleSubmit = async () => {
-    const data = {
-      details: [
-        { eS_qestion: questionValue, eS_answer: answerValue },
-        ...items.map(item => ({
-          eS_qestion: item.eS_qestion,
-          eS_answer: item.eS_answer
-        }))
-      ]
-    };
+    setIsSubmitting(true);
+    const data = [
+      { eS_question: questionValue, eS_answer: answerValue },
+      ...items.map(item => ({
+        eS_question: item.eS_question,
+        eS_answer: item.eS_answer
+      }))
+    ];
   
     try {
-      const response = await axios.post('http://localhost:8080/api/self-introduction/save', data);
+      const response = await axios.post('http://localhost:8080/api/selfIntroduction/feedback', data, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // 인증 토큰 추가
+        }
+      });
       console.log('Response:', response.data);
-      navigate('/editing-page', { state: { details: data.details } });
+      navigate('/editing-page', { state: { details: data, es_feedback: response.data.es_feedback } });
     } catch (error) {
       console.error('Error submitting data:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -74,7 +109,23 @@ const EnterSelfIntroduction = () => {
     adjustTextareaHeight(answerRef.current);
   }, []);
 
-  return (
+  return isSubmitting ? (
+    <div>
+      <ScrollToTop />
+      <div className="EnterSelfIntroduction-frame-12">
+        <div className="EnterSelfIntroduction-frame-wrapper">
+          <div className="EnterSelfIntroduction-frame-13">
+            <div className="EnterSelfIntroduction-frame-14">
+              <div className="EnterSelfIntroduction-frame-15">
+                <div className="EnterSelfIntroduction-text-wrapper-7">답변 내용을 분석 중입니다. 분량에 따라 몇 분의 시간이 소요될 수 있습니다.</div>
+                <TypingText />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : (
     <form className="EnterSelfIntroduction-view">
       <div className="EnterSelfIntroduction-frame">
         <div className="EnterSelfIntroduction-text-wrapper">자기소개서 문항 1</div>
@@ -84,7 +135,7 @@ const EnterSelfIntroduction = () => {
           value={questionValue}
           onChange={handleQuestionChange}
           type="text"
-          name="eS_qestion"
+          name="eS_question"
           placeholder="질문 내용을 작성해주세요."
         />
       </div>
@@ -108,10 +159,10 @@ const EnterSelfIntroduction = () => {
           <textarea
             className="EnterSelfIntroduction-div"
             ref={item.questionRef}
-            value={item.eS_qestion}
+            value={item.eS_question}
             onChange={(e) => {
               const newItems = [...items];
-              newItems[index].eS_qestion = e.target.value;
+              newItems[index].eS_question = e.target.value;
               setItems(newItems);
               adjustTextareaHeight(item.questionRef.current);
               checkButtonActive(questionValue, answerValue);
@@ -127,11 +178,14 @@ const EnterSelfIntroduction = () => {
               ref={item.answerRef}
               value={item.eS_answer}
               onChange={(e) => {
-                const newItems = [...items];
-                newItems[index].eS_answer = e.target.value;
-                setItems(newItems);
-                adjustTextareaHeight(item.answerRef.current);
-                checkButtonActive(questionValue, answerValue);
+                const value = e.target.value;
+                if (value.length <= 1000) {
+                  const newItems = [...items];
+                  newItems[index].eS_answer = value;
+                  setItems(newItems);
+                  adjustTextareaHeight(item.answerRef.current);
+                  checkButtonActive(questionValue, value);
+                }
               }}
               name="eS_answer"
               placeholder="질문에 대한 답변을 작성해주세요."
@@ -151,6 +205,7 @@ const EnterSelfIntroduction = () => {
           <div className="EnterSelfIntroduction-text-wrapper-5">첨삭 받기</div>
         </div>
       </div>
+      {isSubmitting && <TypingText />}
     </form>
   );
 };

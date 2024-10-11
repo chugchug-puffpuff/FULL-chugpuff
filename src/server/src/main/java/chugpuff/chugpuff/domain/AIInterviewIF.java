@@ -1,5 +1,6 @@
 package chugpuff.chugpuff.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,11 +15,12 @@ public class AIInterviewIF {
 
     @ManyToOne
     @JoinColumn(name = "AIInterviewNo")
+    @JsonBackReference
     private AIInterview aiInterview;
 
     private String i_question;
     private String i_answer;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String i_feedback;
 }

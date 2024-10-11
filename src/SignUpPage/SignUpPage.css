@@ -2,7 +2,7 @@
   background-color: #ffffff;
   height: 1469px;
   position: relative;
-  width: 1920px;
+  width: 100%;
 }
 
 .SignUpPage-sign-up {
@@ -131,10 +131,10 @@ input::placeholder {
   border-color: var(--variable-collection-gray-3);
   border-radius: 12.5px;
   flex: 1;
-  flex-grow: 1;
   height: 58.35px;
   overflow: hidden;
   position: relative;
+  width: calc(100% - 120px);
 }
 
 .SignUpPage-text-field-3.SignUpPage-duplicate {
@@ -151,6 +151,7 @@ input::placeholder {
   overflow: hidden;
   padding: 17px 38px;
   position: relative;
+  margin-left: auto;
 }
 
 .SignUpPage-text-wrapper {
@@ -515,6 +516,7 @@ input::placeholder {
 }
 
 .SignUpPage-frame-12 {
+  cursor: pointer;
   align-items: center;
   background-color: var(--variable-collection-gray-3);
   border-radius: 8px;
@@ -529,7 +531,6 @@ input::placeholder {
 .SignUpPage-text-wrapper-9 {
   background-color: transparent;
   border: none;
-  cursor: pointer;
   padding: 0;
   color: var(--variable-collection-main-black);
   font-family: "Pretendard Variable-SemiBold", Helvetica;

@@ -5,14 +5,23 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
-const HistoryComponent = ({ es_no }) => {
+const HistoryComponent = ({ es_no, reload, reloadHistory }) => {
   const [selfIntroductionData, setSelfIntroductionData] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchSelfIntroductionData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/selfintroduction/${es_no}`);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No token found');
+        }
+
+        const response = await axios.get(`http://localhost:8080/api/selfIntroduction/${es_no}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         setSelfIntroductionData(response.data);
       } catch (error) {
         console.error('Failed to fetch self introduction data', error);
@@ -23,7 +32,48 @@ const HistoryComponent = ({ es_no }) => {
     if (es_no) {
       fetchSelfIntroductionData();
     }
-  }, [es_no]);
+  }, [es_no, reload]);
+
+  const toggleSaveStatus = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+  
+      const newSaveStatus = !selfIntroductionData.save;
+  
+      await axios.post(`http://localhost:8080/api/selfIntroduction/save/${es_no}`, {
+        save: newSaveStatus,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      setSelfIntroductionData(prevData => ({
+        ...prevData,
+        save: newSaveStatus
+      }));
+  
+      if (newSaveStatus) {
+        const response = await axios.get('http://localhost:8080/api/selfIntroduction/saved', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (Array.isArray(response.data)) {
+          reloadHistory(response.data, true);
+        } else {
+          reloadHistory([response.data], true);
+        }
+      } else {
+        reloadHistory(null, false);
+      }
+    } catch (error) {
+      console.error('Failed to update save status', error);
+    }
+  };
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -37,30 +87,32 @@ const HistoryComponent = ({ es_no }) => {
 
   const formattedText = es_feedback
     .replace(/\n\n/g, '\n\n&nbsp;\n\n')
-    .replace(/(\n#? )(.+?:)/g, '$1<span class="bold">$2</span>'); 
+    .replace(/(\n#? )(.+?:)/g, '$1<span class="bold">$2</span>')
+    .replace(/피드백:/g, '피드백')
+    .replace(/자기소개서:/g, '자기소개서');
 
   return (
-    <div className="EditingComponent-frame-12">
-      <div className="EditingComponent-frame-wrapper">
-        <div className="EditingComponent-frame-13">
-          <div className="EditingComponent-frame-14">
+    <div className="HistoryComponent-frame-12">
+      <div className="HistoryComponent-frame-wrapper">
+        <div className="HistoryComponent-frame-13">
+          <div className="HistoryComponent-frame-14">
             {details.map((details, index) => (
-              <div key={index} className="EditingComponent-frame-15">
-                <div className="EditingComponent-text-wrapper-7">자기소개서 문항 {index + 1}</div>
-                <p className="EditingComponent-text-wrapper-8">{details.eS_question}</p>
-                <div className="EditingComponent-text-wrapper-7">답변 {index + 1}</div>
-                <p className="EditingComponent-text-wrapper-8">{details.eS_answer}</p>
+              <div key={index} className="HistoryComponent-frame-15">
+                <div className="HistoryComponent-text-wrapper-7">자기소개서 문항 {index + 1}</div>
+                <p className="HistoryComponent-text-wrapper-8">{details.eS_question}</p>
+                <div className="HistoryComponent-text-wrapper-7">답변 {index + 1}</div>
+                <p className="HistoryComponent-text-wrapper-8">{details.eS_answer}</p>
               </div>
             ))}
             <img
-              className="EditingComponent-img"
+              className="HistoryComponent-img"
               alt="Line"
               src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/6698aa612be89236643e00e3/img/line-2.png"
             />
-            <div className="EditingComponent-frame-15">
-              <div className="EditingComponent-text-wrapper-7">피드백</div>
+            <div className="HistoryComponent-frame-15">
+              <div className="HistoryComponent-text-wrapper-7">피드백</div>
               <ReactMarkdown
-                className="EditingComponent-text-wrapper-8"
+                className="HistoryComponent-text-wrapper-8"
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeRaw]}
               >
@@ -68,19 +120,12 @@ const HistoryComponent = ({ es_no }) => {
               </ReactMarkdown>
             </div>
           </div>
-          {save ? (
-            <img
-              className="bookmark"
-              alt="Bookmark"
-              src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66b9e79f35eec696212b24a2/img/bookmark@2x.png"
-            />
-          ) : (
-            <img
-              className="EditingComponent-bookmark-2"
-              alt="Bookmark"
-              src="https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/6698aa612be89236643e00e3/img/bookmark@2x.png"
-            />
-          )}
+          <img
+            className={save ? "HistoryComponent-bookmark" : "HistoryComponent-bookmark-2"}
+            alt={save ? "저장o" : "저장x"}
+            src={save ? "https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/66b9e79f35eec696212b24a2/img/bookmark@2x.png" : "https://cdn.animaapp.com/projects/666f9293d0304f0ceff1aa2f/releases/6698aa612be89236643e00e3/img/bookmark@2x.png"}
+            onClick={toggleSaveStatus}
+          />
         </div>
       </div>
     </div>

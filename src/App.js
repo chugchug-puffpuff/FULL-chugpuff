@@ -14,6 +14,13 @@ import AIInterviewHistory from './AIInterviewPage/AIInterviewHistory.js';
 import SelfIntroductionPage from './SelfIntroduction/SelfIntroductionPage.js';
 import SeHistoryPage from './SelfIntroduction/SeHistoryPage.js';
 import EditingPage from './SelfIntroduction/EditingPage.js';
+import JobPostingMain from './JobPostingPage/JobPostingMain.js';
+import RecruitInfoPage from './JobPostingPage/RecruitInfoPage.js';
+import CommunityPage from './CommunityPage/CommunityPage.js';
+import PostRegister from './CommunityPage/PostRegister.js';
+import PostModify from './CommunityPage/PostModify.js';
+import CommunityPost from './CommunityPage/CommunityPost.js';
+import CalendarMain from './CalendarPage/CalendarMain.js';
 
 function App() {
   const [authenticate, setAuthenticate] = useState(false);
@@ -27,14 +34,14 @@ function App() {
       setAuthenticate(true);
       setUserName(storedUserName);
     }
-    console.log("로그인 여부", authenticate);
-  }, [authenticate]);
+  }, []);
 
   return (
     <div>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<MainPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
+        {authenticate && <Route path="/:userId" element={<MainPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />}
         <Route path="/login" element={<LoginPage setAuthenticate={setAuthenticate} authenticate={authenticate} setUserName={setUserName} userName={userName}/>} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/aiinterview" element={<PrivateRoute authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName}>
@@ -47,8 +54,20 @@ function App() {
         </PrivateRoute>} />
         <Route path="/editing-page" element={<EditingPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
         <Route path="/selfintroductionhistory/:es_no" element={<SeHistoryPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
-        <Route path="/myactivities" element={<MyPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
-        {authenticate && <Route path="/:userId" element={<MainPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />}
+        <Route path="/jobposting" element={<PrivateRoute authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName}>
+          <JobPostingMain authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />
+        </PrivateRoute>} />
+        <Route path="/recruitinfo/:jobId" element={<RecruitInfoPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
+        <Route path="/community" element={<PrivateRoute authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName}>
+          <CommunityPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />
+        </PrivateRoute>} />
+        <Route path="/postregister" element={<PostRegister authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
+        <Route path="/postmodify/:boardNo" element={<PostModify authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
+        <Route path="/communitypost/:boardNo" element={<CommunityPost authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
+        <Route path="/calender" element={<PrivateRoute authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName}>
+          <CalendarMain authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />
+        </PrivateRoute>} />
+        <Route path="/myactivities/:component" element={<MyPage authenticate={authenticate} setAuthenticate={setAuthenticate} userName={userName} />} />
       </Routes>
     </div>
   );

@@ -1,5 +1,6 @@
 package chugpuff.chugpuff.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,13 +13,11 @@ public class AIInterviewFF {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long AIInterviewFFNo;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "AIInterviewNo")
+    @JsonBackReference
     private AIInterview aiInterview;
 
     private String f_question;
     private String f_answer;
-
-    @Column(columnDefinition = "TEXT")
-    private String f_feedback;
 }

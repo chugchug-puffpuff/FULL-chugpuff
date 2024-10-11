@@ -7,18 +7,23 @@ import chugpuff.chugpuff.service.AIInterviewService;
 import chugpuff.chugpuff.service.ExternalAPIService;
 import chugpuff.chugpuff.service.MemberService;
 import chugpuff.chugpuff.service.TimerService;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-        import java.io.File;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,115 +37,163 @@ public class AIInterviewController {
     private MemberService memberService;
 
     @Autowired
-    private TimerService timerService;
-
-    @Autowired
     private ExternalAPIService externalAPIService;
 
-    // AI 모의면접 저장
+    @Autowired
+    private TimerService timerService;
+
+    // AI 면접 생성
     @PostMapping
-    public AIInterview saveInterview(@RequestBody AIInterviewDTO aiInterviewDTO) {
-        Member member = memberService.getMemberByUser_id(aiInterviewDTO.getUser_id())
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-
-        AIInterview aiInterview = new AIInterview();
-        aiInterview.setInterviewType(aiInterviewDTO.getInterviewType());
-        aiInterview.setFeedbackType(aiInterviewDTO.getFeedbackType());
-        aiInterview.setMember(member);
-
-        return aiInterviewService.saveInterview(aiInterview);
+    public ResponseEntity<?> createInterview(@RequestBody AIInterviewDTO aiInterviewDTO) {
+        return aiInterviewService.createInterview(aiInterviewDTO);
     }
 
-    // AI 모의면접 시작
+    // 모의면접 세션 초기화 및 첫 질문 생성
     @PostMapping("/{AIInterviewNo}/start")
-    public void startInterview(@PathVariable Long AIInterviewNo, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Map<String, String>> startInterview(@PathVariable Long AIInterviewNo) {
         AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
         if (aiInterview == null) {
-            throw new RuntimeException("Interview not found");
+            return ResponseEntity.badRequest().body(null);
         }
+        String firstQuestion = aiInterviewService.startInterview(aiInterview);
+        String ttsAudioUrl = externalAPIService.callTTS(firstQuestion);
 
-        // 사용자 정보를 출력하여 디버깅
-        System.out.println("Logged in user: " + userDetails.getUsername());
-        System.out.println("Interview owner user_id: " + aiInterview.getMember().getUser_id());
+        Map<String, String> response = new HashMap<>();
+        response.put("question", firstQuestion);
+        response.put("ttsAudioUrl", ttsAudioUrl);
 
-        // 여기서는 검증을 하지 않지만 로그를 남깁니다.
-        aiInterviewService.startInterview(AIInterviewNo);
+        return ResponseEntity.ok(response);
     }
 
-    // AI 모의면접 중지
-    @PostMapping("/{AIInterviewNo}/stop")
-    public void stopInterview(@AuthenticationPrincipal UserDetails userDetails) {
-        System.out.println("Logged in user: " + userDetails.getUsername());
-        timerService.stopTimer();
-    }
-
-    // 즉시 피드백 저장
-    @PostMapping("/{AIInterviewNo}/immediate-feedback")
-    public void saveImmediateFeedback(@PathVariable Long AIInterviewNo, @RequestBody FeedbackRequest feedbackRequest, @AuthenticationPrincipal UserDetails userDetails) {
-        System.out.println("Logged in user: " + userDetails.getUsername());
+    // 타이머 시작
+    @PostMapping("/{AIInterviewNo}/start-timer")
+    public ResponseEntity<Map<String, Object>> startInterviewTimer(@PathVariable Long AIInterviewNo) {
         AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
-        if (aiInterview != null) {
-            aiInterviewService.saveImmediateFeedback(aiInterview, feedbackRequest.getQuestion(), feedbackRequest.getAnswer(), feedbackRequest.getFeedback());
-        }
-    }
-
-    // 전체 피드백 저장
-    @PostMapping("/{AIInterviewNo}/full-feedback")
-    public void saveFullFeedback(@PathVariable Long AIInterviewNo, @RequestBody FeedbackRequest feedbackRequest, @AuthenticationPrincipal UserDetails userDetails) {
-        System.out.println("Logged in user: " + userDetails.getUsername());
-        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
-        if (aiInterview != null) {
-            aiInterviewService.saveFullFeedback(aiInterview, feedbackRequest.getQuestion(), feedbackRequest.getAnswer(), feedbackRequest.getFeedback());
-        }
-    }
-
-    // TTS 요청 처리
-    @PostMapping("/tts")
-    public ResponseEntity<FileSystemResource> convertTextToSpeech(@RequestBody Map<String, String> requestBody) {
-        String text = requestBody.get("text");
-        String audioFilePath = externalAPIService.callTTS(text);
-        File audioFile = new File(audioFilePath);
-        if (!audioFile.exists()) {
-            return ResponseEntity.notFound().build();
+        if (aiInterview == null) {
+            return ResponseEntity.badRequest().body(null);
         }
 
-        FileSystemResource resource = new FileSystemResource(audioFile);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=output.mp3");
+        aiInterviewService.startInterviewTimer(aiInterview);
 
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(audioFile.length())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+        Map<String, Object> remainingTime = timerService.getRemainingTime();
+        return ResponseEntity.ok(remainingTime);
     }
 
-    // 음성 파일을 STT로 변환하여 텍스트로 반환하고 ChatGPT로 보내기
-    @PostMapping("/{AIInterviewNo}/process-audio-response")
-    public ResponseEntity<String> processAudioResponse(@PathVariable Long AIInterviewNo, @RequestParam("audioFile") FileSystemResource audioFile) {
-        String audioFilePath = audioFile.getPath();
-        String sttText = externalAPIService.callSTT(audioFilePath);
-
+    // 답변 녹음 시작
+    @PostMapping("/{AIInterviewNo}/answer-start")
+    public ResponseEntity<String> startAnswerRecording(@PathVariable Long AIInterviewNo) {
         AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
         if (aiInterview == null) {
             return ResponseEntity.badRequest().body("Interview not found");
         }
 
-        String feedback = aiInterviewService.getChatGPTFeedback(sttText, aiInterview);
+        aiInterviewService.captureUserAudio();
+        return ResponseEntity.ok("녹음 시작");
+    }
 
-        // 필요한 경우 즉시 피드백을 저장합니다.
-        if ("즉시 피드백".equals(aiInterview.getFeedbackType())) {
-            aiInterviewService.saveImmediateFeedback(aiInterview, "User's Question", sttText, feedback);
+    // 답변 녹음 완료
+    @PostMapping("/{AIInterviewNo}/answer-complete")
+    public ResponseEntity<Map<String, String>> completeAnswerRecording(@PathVariable Long AIInterviewNo) {
+        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
+        if (aiInterview == null) {
+            return ResponseEntity.badRequest().body(null);
         }
 
-        return ResponseEntity.ok(feedback);
+        Map<String, String> response = aiInterviewService.completeAnswerRecordingWithAudioUrl(AIInterviewNo);
+        return ResponseEntity.ok(response);
     }
-}
 
-@Getter
-@Setter
-class FeedbackRequest {
-    private String question;
-    private String answer;
-    private String feedback;
+    // 녹음된 파일을 STT로 변환하여 텍스트로 반환
+    @PostMapping("/{AIInterviewNo}/convert-answer")
+    public ResponseEntity<Map<String, String>> convertAnswerToText(@PathVariable Long AIInterviewNo, @RequestParam("audioFile") MultipartFile audioFile) {
+        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
+        if (aiInterview == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        String audioFilePath = "captured_audio_" + AIInterviewNo + ".wav";
+        File file = new File(audioFilePath);
+        try (OutputStream os = new FileOutputStream(file)) {
+            os.write(audioFile.getBytes());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        Map<String, String> response = aiInterviewService.convertAnswerToText(aiInterview, audioFilePath);
+        return ResponseEntity.ok(response);
+    }
+
+    // 피드백 생성 및 TTS 변환
+    @PostMapping("/{AIInterviewNo}/generate-feedback")
+    public ResponseEntity<Map<String, String>> generateFeedback(@PathVariable Long AIInterviewNo) {
+        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
+        if (aiInterview == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Map<String, String> response;
+        if ("전체 피드백".equals(aiInterview.getFeedbackType())) {
+            response = aiInterviewService.generateFullFeedback(aiInterview);
+        } else {
+            String lastUserResponse = aiInterviewService.userResponses.get(aiInterview.getAIInterviewNo());
+            response = aiInterviewService.generateFeedback(aiInterview, lastUserResponse);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 다음 질문 생성 및 TTS 변환
+    @PostMapping("/{AIInterviewNo}/next-question")
+    public ResponseEntity<Map<String, String>> getNextQuestion(@PathVariable Long AIInterviewNo) {
+        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
+        if (aiInterview == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Map<String, String> response = aiInterviewService.generateNextQuestion(aiInterview);
+        return ResponseEntity.ok(response);
+    }
+
+    // AI 모의면접 종료
+    @PostMapping("/{AIInterviewNo}/end")
+    public ResponseEntity<Map<String, Object>> endInterview(@PathVariable Long AIInterviewNo) {
+        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
+        if (aiInterview == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Map<String, String> feedbackResponse = aiInterviewService.endInterview(aiInterview);
+
+        Map<String, Object> interviewSummary = aiInterviewService.getInterviewSummary(aiInterview);
+
+        if ("전체 피드백".equals(aiInterview.getFeedbackType()) && feedbackResponse != null) {
+            interviewSummary.put("overallFeedback", feedbackResponse.get("feedback"));
+        }
+
+        return ResponseEntity.ok(interviewSummary);
+    }
+
+    // AI 모의면접 삭제
+    @DeleteMapping("/{AIInterviewNo}")
+    public ResponseEntity<Void> deleteInterview(@PathVariable Long AIInterviewNo) {
+        aiInterviewService.deleteInterviewById(AIInterviewNo);
+        return ResponseEntity.noContent().build();
+    }
+
+    // AIInterviewNo로 면접 조회
+    @GetMapping("/{AIInterviewNo}")
+    public ResponseEntity<AIInterviewDTO> getInterviewById(@PathVariable Long AIInterviewNo) {
+        AIInterview aiInterview = aiInterviewService.getInterviewById(AIInterviewNo);
+        if (aiInterview == null) {
+            return ResponseEntity.status(404).body(null);
+        }
+        AIInterviewDTO aiInterviewDTO = aiInterviewService.convertToDTO(aiInterview);
+        return ResponseEntity.ok(aiInterviewDTO);
+    }
+
+    // id로 면접 조회
+    @GetMapping("/id/{id}")
+    public List<AIInterview> getInterviewsByMember(@PathVariable String id) {
+        return aiInterviewService.findByMemberId(id);
+    }
 }
